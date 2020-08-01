@@ -1,12 +1,19 @@
 // import { feature } from 'https://unpkg.com/visionscarto-world-atlas@0.0.6/world/50m.json';
-// import { csv, json, range } from 'https://unpkg.com/d3@5.7.0/dist/d3.min.js';
+// import { csv, range } from 'https://unpkg.com/d3@5.7.0/dist/d3.min.js';
+
+
+// const allCaps = str => str === str.toUpperCase();
+// const isCategory = country => allCaps(country) && country !== 'WORLD';
+
+const isCategory = type => type == 'Region';
 
 export const loadAndProcessData = () =>
     Promise
         .all([
             // tsv('https://unpkg.com/world-atlas@1.1.4/world/50m.tsv'),
             d3.csv('https://gist.githubusercontent.com/nkohdatavis/268451b90e82c0b5432107dd80825aa8/raw/un-population-estimates-medium.csv'),
-            d3.json('https://unpkg.com/visionscarto-world-atlas@0.0.6/world/50m.json')
+            d3.csv('https://gist.githubusercontent.com/nkohdatavis/c59f7cba7340d25eb6da20cda9c7a68d/raw/Un-population-estimates.csv')
+            // d3.json('https://unpkg.com/visionscarto-world-atlas@0.0.6/world/50m.json')
         ])
         .then(([unData, topoJSONdata]) => {
             // console.log(unData);
@@ -20,22 +27,27 @@ export const loadAndProcessData = () =>
             const data = [];
 
             unData.forEach(d => {
+                const country = d['Region, subregion, country or area *'];
                 years.forEach(year => {
-                    const country = d['Region, subregion, country or area *'];
                     const population = +d[year].replace(/ /g, '') * 1000;
+                    const type = d['Type'];
                     const row = {
                         year: new Date(year + ' '),
                         country,
-                        population
+                        population,
+                        type
                     };
-                    // console.log(row);
+                    console.log(row);
                     data.push(row);
                 });
             });
 
+            //             return data.filter(d => isCategory(d.country));
+            return data.filter(d => isCategory(d.type));
+
             // console.log(data);
 
-            return data;
+            return data.filter(d => d.country);
             // const rowById = unData.reduce((accumulator, d) => {
             //     accumulator[d['Country code']] = d;
             //     return accumulator;
