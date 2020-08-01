@@ -1,22 +1,24 @@
-// import { 
-//   select, 
-//   csv, 
-//   scaleLinear, 
+// import {
+//   select,
+//   csv,
+//   scaleLinear,
 //   scaleTime,
-//   extent, 
+//   extent,
 //   axisLeft,
 //   axisBottom,
 //   line,
 //   curveBasis,
 //   nest,
 //   schemeCategory10,
-//   scaleOrdinal
-//   descending
-// } from "https://unpkg.com/d3@5.7.0/dist/d3.min.js"; 
+//   scaleOrdinal,
+//   descending.
+//   format
+// } from "https://unpkg.com/d3@5.7.0/dist/d3.min.js";
 
 // import { dropdownMenu } from './dropdownMenu.js';
 // import { scatterPlot } from './scatterPlot.js';
 import { colorLegend } from './colorLegend.js';
+import { loadAndProcessData } from './loadAndProcessData.js';
 
 const svg = d3.select('svg');
 
@@ -25,16 +27,16 @@ const height = +svg.attr('height');
 
 //accessor functions
 const render = data => {
-  const title = 'A Week of Temperature Around the World';
+  const title = 'Population over Time';
 
-  const xValue = d => d.timestamp;
-  const xAxisLabel = 'Time';
+  const xValue = d => d.year;
+  const xAxisLabel = 'Year';
 
-  const yValue = d => d.temperature;
-  const yAxisLabel = 'Temperature';
+  const yValue = d => d.population;
+  const yAxisLabel = 'Population';
   const circleRadius = 6;
 
-  const colorValue = d => d.city;
+  const colorValue = d => d.country;
 
 
   const margin = { top: 60, right: 160, bottom: 88, left: 105 };
@@ -66,8 +68,14 @@ const render = data => {
     .tickSize(-innerHeight)
     .tickPadding(15);
 
+  const yAxisTickFormat = number =>
+    d3.format('.2s')(number)
+      .replace('G', 'B')
+      .replace('.0', '');
+
   const yAxis = d3.axisLeft(yScale)
     .tickSize(-innerWidth)
+    .tickFormat(yAxisTickFormat)
     .tickPadding(10);
 
   const yAxisG = g.append('g').call(yAxis);
@@ -162,11 +170,4 @@ const render = data => {
 };
 
 //Data Table
-d3.csv('https://vizhub.com/curran/datasets/data-canvas-sense-your-city-one-week.csv')
-  .then(data => {
-    data.forEach(d => {
-      d.temperature = +d.temperature;
-      d.timestamp = new Date(d.timestamp);
-    });
-    render(data);
-  });
+loadAndProcessData().then(render);
