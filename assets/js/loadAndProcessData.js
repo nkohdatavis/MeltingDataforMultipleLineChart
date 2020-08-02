@@ -5,6 +5,7 @@
 // const allCaps = str => str === str.toUpperCase();
 // const isCategory = country => allCaps(country) && country !== 'WORLD';
 
+const parseYear = d3.timeParse('%Y');
 const isCategory = type => type == 'Region';
 
 // console.log(unData);
@@ -17,18 +18,19 @@ const melt = (unData, minYear, maxYear) => {
     const data = [];
 
     unData.forEach(d => {
-        const country = d['Region, subregion, country or area *'];
+        const country = d['Region, subregion, country or area *']
+            .replace('AND THE', '&');
         years.forEach(year => {
             // console.log(years);
             const population = +d[year].replace(/ /g, '') * 1000;
             const type = d['Type'];
             const row = {
-                year: new Date(year + ' '),
+                year: parseYear(year),
                 country,
                 population,
                 type
             };
-            console.log(row);
+            // console.log(row);
             data.push(row);
         });
     });

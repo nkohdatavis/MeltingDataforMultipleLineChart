@@ -27,7 +27,7 @@ const height = +svg.attr('height');
 
 //accessor functions
 const render = data => {
-  const title = 'Population over Time';
+  const title = 'Population over Time by Region';
 
   const xValue = d => d.year;
   const xAxisLabel = 'Year';
@@ -39,14 +39,13 @@ const render = data => {
   const colorValue = d => d.country;
 
 
-  const margin = { top: 60, right: 160, bottom: 88, left: 105 };
+  const margin = { top: 60, right: 280, bottom: 88, left: 105 };
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
 
   const xScale = d3.scaleTime()
     .domain(d3.extent(data, xValue))
-    .range([0, innerWidth])
-    .nice();
+    .range([0, innerWidth]);
 
   // console.log(xScale.domain());
   // console.log(xScale.range());
@@ -160,12 +159,12 @@ const render = data => {
     .text(title);
 
   svg.append('g')
-    .attr('transform', `translate(790,121)`)
+    .attr('transform', `translate(700,110)`)
     .call(colorLegend, {
       colorScale,
-      circleRadius: 13,
-      spacing: 30,
-      textOffset: 14
+      circleRadius: 10,
+      spacing: 55,
+      textOffset: 15
     });
 };
 
